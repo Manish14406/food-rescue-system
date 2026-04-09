@@ -1,0 +1,22 @@
+{
+  "name": "foodlink-rescue",
+  "version": "1.0.0",
+  "description": "FoodRescue full-stack prototype with Node.js + MongoDB backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "start:mongodb": "mongod --dbpath ./data/mongodb --bind_ip 127.0.0.1 --port 27017"
+  },
+  "keywords": [
+    "food-waste",
+    "donation",
+    "ngo",
+    "volunteer"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^6.17.0"
+  }
+}
