@@ -1,0 +1,27 @@
+[build]
+  # Set the base directory to where the React app lives
+  base = "frontend"
+  # The command to build the React app
+  command = "npm install && npm run build"
+  # The directory that contains the compiled assets
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Set up redirects for React Router (Single Page Application)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+
+# IMPORTANT FOR BACKEND:
+# Once you deploy your Python FastAPI backend (e.g., on Render, Railway, or Heroku),
+# uncomment the block below and replace the URL to route /api calls to your live backend.
+#
+# [[redirects]]
+#   from = "/api/*"
+#   to = "https://your-live-backend-url.com/api/:splat"
+#   status = 200
+#   force = true
