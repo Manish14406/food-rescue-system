@@ -22,11 +22,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="FoodRescue NGO Platform")
 
-# Enable CORS for deployment compatibility (Netlify, etc.)
+# Enable CORS for deployment compatibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace with your specific Netlify domain
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False, # Set to false when using allow_origins=["*"] for production compatibility
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -142,4 +142,5 @@ async def custom_404_handler(request: Request, exc: HTTPException):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=3000)
+    port = int(os.environ.get("PORT", 3000))
+    uvicorn.run(app, host="0.0.0.0", port=port)

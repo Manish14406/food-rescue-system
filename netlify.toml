@@ -16,12 +16,9 @@
   status = 200
   force = false
 
-# IMPORTANT FOR BACKEND:
-# Once you deploy your Python FastAPI backend (e.g., on Render, Railway, or Heroku),
-# uncomment the block below and replace the URL to route /api calls to your live backend.
-#
-# [[redirects]]
-#   from = "/api/*"
-#   to = "https://your-live-backend-url.com/api/:splat"
-#   status = 200
-#   force = true
+# Set up redirects for API proxying
+[[redirects]]
+  from = "/api/*"
+  to = "https://food-rescue-system.onrender.com/api/:splat"
+  status = 200
+  force = true
