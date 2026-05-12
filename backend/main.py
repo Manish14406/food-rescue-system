@@ -22,11 +22,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="FoodRescue NGO Platform")
 
+origins = [
+    "https://coruscating-bienenstitch-e87845.netlify.app"
+]
 # Enable CORS for deployment compatibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False, # Set to false when using allow_origins=["*"] for production compatibility
+    allow_origins=origins,
+    allow_credentials=True, # Set to false when using allow_origins=["*"] for production compatibility
     allow_methods=["*"],
     allow_headers=["*"],
 )
