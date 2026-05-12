@@ -100,6 +100,30 @@ async def admin_login(payload: Dict[str, str]):
         }
     }
 
+@app.get("/api/donations")
+async def get_donations(search: str = "", donorType: str = "All"):
+    donations = await db.list_donations()
+    
+    if search:
+        search_lower = search.lower()
+        donations = [d for d in donations if search_lower in d["business_name"].lower() or search_lower in d["food_type"].lower() or search_lower in d["pickup_address"].lower()]
+        
+    result = []
+    for d in donations:
+        result.append({
+            "id": d["id"],
+            "organizationName": d["business_name"],
+            "donorType": "Restaurant",
+            "status": d["status"],
+            "foodType": d["food_type"],
+            "foodDescription": d["food_type"],
+            "quantityKg": d["quantity"],
+            "servings": "?",
+            "area": d["pickup_address"],
+            "claimedByOrg": ""
+        })
+    return result
+
 @app.post("/api/donations")
 async def create_donation(payload: Dict[str, Any]):
     try:
@@ -111,6 +135,28 @@ async def create_donation(payload: Dict[str, Any]):
 async def create_needy_request(payload: Dict[str, Any]):
     try:
         return {"id": await db.create_needy_request(payload)}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/ngos/{ngoId}/needy-centers")
+async def get_needy_centers(ngoId: int):
+    requests = await db.list_needy_requests(status="open")
+    result = []
+    for r in requests:
+        result.append({
+            "id": r["id"],
+            "name": r["center_name"],
+            "location": r["address"]
+        })
+    return result
+
+@app.post("/api/donations/{donationId}/claim")
+async def claim_donation(donationId: int, payload: Dict[str, Any]):
+    try:
+        # payload has ngoId and needyCenterId
+        # We need an admin_id for create_assignment, using ngoId as admin_id
+        await db.create_assignment(payload["ngoId"], donationId, payload["needyCenterId"])
+        return {"status": "success"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
