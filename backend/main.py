@@ -53,8 +53,9 @@ async def get_current_admin(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        if email is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+        role: str = payload.get("role")
+        if email is None or role != "admin":
+            raise HTTPException(status_code=401, detail="Unauthorized: Admin access required")
         return email
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -70,19 +71,30 @@ async def admin_login(payload: Dict[str, str]):
     email = payload.get("email")
     password = payload.get("password")
     
+    print(f"DEBUG: Login attempt for email: {email}")
     admin = await db.get_admin_by_email(email)
-    if not admin or not db.verify_password(password, admin["password_hash"]):
+    
+    if not admin:
+        print(f"DEBUG: No admin found for email: {email}")
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
+    if not db.verify_password(password, admin["password_hash"]):
+        print(f"DEBUG: Password verification failed for email: {email}")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    print(f"DEBUG: Login successful for email: {email}")
+    
     # Standardizing response keys for the frontend
-    access_token = create_access_token(data={"sub": admin["email"]})
+    access_token = create_access_token(data={"sub": admin["email"], "role": admin["role"]})
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "user": {
             "id": admin["id"],
+            "username": admin["username"],
             "name": admin["full_name"],
-            "email": admin["email"]
+            "email": admin["email"],
+            "role": admin["role"]
         }
     }
 

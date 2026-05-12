@@ -3,9 +3,11 @@ PRAGMA foreign_keys = ON;
 -- 1. NGO Admins (Owners of the platform)
 CREATE TABLE IF NOT EXISTS ngo_admins (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL UNIQUE,
   full_name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'admin',
   created_at TEXT NOT NULL
 );
 

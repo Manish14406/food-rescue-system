@@ -28,10 +28,10 @@ const AdminLogin = () => {
         throw new Error(data.detail || 'Invalid admin credentials')
       }
 
-      // Strict validation of response keys
-      if (!data.access_token || !data.user || !data.user.id) {
-        console.error('Response is missing keys:', data)
-        throw new Error('Server error: Incomplete login response (Missing Token or User ID)')
+      // Strict validation of response keys and role
+      if (!data.access_token || !data.user || !data.user.id || data.user.role !== 'admin') {
+        console.error('Response is missing keys or invalid role:', data)
+        throw new Error('Unauthorized: Admin access required')
       }
 
       localStorage.setItem('adminUser', JSON.stringify(data.user))
@@ -59,7 +59,7 @@ const AdminLogin = () => {
         <form onSubmit={handleSubmit} className="donation-form" style={{ marginTop: '20px' }}>
           <div className="form-group">
             <label>Admin Email</label>
-            <input name="email" type="email" required placeholder="admin@foodrescue.org" />
+            <input name="email" type="email" required placeholder="admin@foodrescue.com" />
           </div>
           <div className="form-group">
             <label>Password</label>

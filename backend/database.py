@@ -41,8 +41,8 @@ async def initialize_database():
             if row["count"] == 0:
                 admin_pass = hash_password("admin123")
                 await db.execute(
-                    "INSERT INTO ngo_admins (full_name, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
-                    ("NGO Administrator", "admin@foodrescue.org", admin_pass, now_iso())
+                    "INSERT INTO ngo_admins (username, full_name, email, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+                    ("admin", "NGO Administrator", "admin@foodrescue.com", admin_pass, "admin", now_iso())
                 )
         await db.commit()
 

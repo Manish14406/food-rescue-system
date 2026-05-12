@@ -36,7 +36,8 @@ const AdminDashboard = () => {
           return
         }
 
-        if (!user || !user.id) {
+        if (!user || !user.id || user.role !== 'admin') {
+          console.error('Unauthorized access: Admin role required')
           handleLogout()
           return
         }
