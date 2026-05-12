@@ -71,18 +71,10 @@ async def admin_login(payload: Dict[str, str]):
     email = payload.get("email")
     password = payload.get("password")
     
-    print(f"DEBUG: Login attempt for email: {email}")
     admin = await db.get_admin_by_email(email)
     
-    if not admin:
-        print(f"DEBUG: No admin found for email: {email}")
+    if not admin or not db.verify_password(password, admin["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    if not db.verify_password(password, admin["password_hash"]):
-        print(f"DEBUG: Password verification failed for email: {email}")
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    print(f"DEBUG: Login successful for email: {email}")
     
     # Standardizing response keys for the frontend
     access_token = create_access_token(data={"sub": admin["email"], "role": admin["role"]})

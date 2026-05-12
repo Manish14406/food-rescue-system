@@ -36,9 +36,9 @@ async def initialize_database():
         await db.executescript(schema)
         
         # Create a default admin if none exists
-        async with db.execute("SELECT COUNT(*) as count FROM ngo_admins") as cursor:
-            row = await cursor.fetchone()
-            if row["count"] == 0:
+        async with db.execute("SELECT id FROM ngo_admins WHERE email = ?", ("admin@foodrescue.com",)) as cursor:
+            admin = await cursor.fetchone()
+            if not admin:
                 admin_pass = hash_password("admin123")
                 await db.execute(
                     "INSERT INTO ngo_admins (username, full_name, email, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, ?)",
