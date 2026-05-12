@@ -66,6 +66,16 @@ async def get_current_admin(token: str = Depends(oauth2_scheme)):
 async def get_stats():
     return await db.get_stats()
 
+@app.get("/api/debug/admin")
+async def debug_admin_status():
+    """Temporary debug route to verify admin persistence on Render."""
+    admin = await db.get_admin_by_email("admin@foodrescue.com")
+    return {
+        "admin_exists": admin is not None,
+        "admin_email": admin["email"] if admin else None,
+        "database_path": db.DB_PATH
+    }
+
 @app.post("/api/admin/login")
 async def admin_login(payload: Dict[str, str]):
     email = payload.get("email")

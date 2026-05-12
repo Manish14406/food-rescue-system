@@ -36,14 +36,20 @@ async def initialize_database():
         await db.executescript(schema)
         
         # Create a default admin if none exists
+        print("INFO: Checking default admin account...")
         async with db.execute("SELECT id FROM ngo_admins WHERE email = ?", ("admin@foodrescue.com",)) as cursor:
             admin = await cursor.fetchone()
             if not admin:
+                print("INFO: Default admin NOT found. Creating account...")
                 admin_pass = hash_password("admin123")
                 await db.execute(
                     "INSERT INTO ngo_admins (username, full_name, email, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, ?)",
                     ("admin", "NGO Administrator", "admin@foodrescue.com", admin_pass, "admin", now_iso())
                 )
+                await db.commit()
+                print("INFO: Default admin created successfully.")
+            else:
+                print("INFO: Default admin already exists.")
         await db.commit()
 
 # --- Mappers ---
